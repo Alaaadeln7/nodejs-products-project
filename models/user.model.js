@@ -28,10 +28,6 @@ const userSchema = new mongoose.Schema({
     type:String,
     enum:[ USER , ADMIN , MANAGER ],
     default: USER,
-  }
-  ,
-  token: {
-    type: String
   },
   avatar:{
     type: String,

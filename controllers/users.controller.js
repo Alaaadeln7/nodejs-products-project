@@ -3,7 +3,6 @@ const User = require("../models/user.model")
 const {SUCCESS , FILAD , ERROR} = require("../utils/httpStatusText");
 const appError = require("../utils/appError");
 const bcrypt = require('bcryptjs');
-const generateJWT = require("../utils/generateJWT");
 
 
 const getAllUsers = asyncWrapper(async (req,res) => {
@@ -43,10 +42,6 @@ const register = asyncWrapper(
       password: hashedPassword,
       avatar: req.file.fileName
     })
-
-    // generate JWT token
-    const token = await generateJWT({email: newUser.email , id: newUser._id, role: newUser.role})
-    newUser.token = token ; 
     await newUser.save();
     res.status(201).json({status: SUCCESS , data: {user: newUser}})
 
@@ -67,15 +62,13 @@ const login = asyncWrapper(
     }
     const user = await User.findOne({email: email});
     if(!user){
-      const error = appError.create("user is not found", 400 , ERROR)
+      const error = appError.create("user is not found", 400 , FILAD)
       return next(error);
     }
     const matchedPassword = await bcrypt.compare(password , user.password);
     
     if (user && matchedPassword) {
-
-      const token = await generateJWT({email: user.email , id: user._id, role: newUser.role})
-      res.json({status: SUCCESS , data: { token }});
+      res.json({status: SUCCESS , data: { user }});
     }else{
       const error = appError.create("something wrong", 500 , ERROR)
       return next(error);

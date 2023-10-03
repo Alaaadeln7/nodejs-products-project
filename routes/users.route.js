@@ -31,7 +31,6 @@ const upload = multer({
 
 // verify token
 
-const verifyToken = require("../middleware/verifyToken");
 
 // import controllers
 const {getAllUsers ,register ,login} = require("../controllers/users.controller");
@@ -41,7 +40,7 @@ const appError = require('../utils/appError');
 
 
 router.route('/')
-      .get(verifyToken, getAllUsers)
+      .get(getAllUsers)
 
 
 router.route('/register')
